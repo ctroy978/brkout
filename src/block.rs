@@ -23,7 +23,7 @@ fn block_spawn(
         material: materials.red_block.clone(),
         sprite: Sprite::new(Vec2::new(BLK_WIDTH, BLK_HEIGHT)),  
         transform: Transform{
-            translation: Vec3::new(0.0, 100.0, 10.0),
+            translation: Vec3::new(0.0, 100.0, 0.0),
             ..Default::default()
         },
         ..Default::default()

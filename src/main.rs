@@ -5,10 +5,12 @@ use bevy::{
 mod ball;
 mod block;
 mod falling;
+mod gravity;
 
 use ball::BallPlugin;
 use block::BlockPlugin;
 use falling::FallingPlugin;
+use gravity::GravityPlugin;
 
 const WALL_THICK: f32 = 10.0;
 const BLK_HEIGHT: f32 = 20.0;
@@ -27,12 +29,11 @@ struct WinSize{
     h: f32,
 }
 
-
 struct Ball{
     velocity: Vec3,
 }
 
-
+struct Gravity;
 
 struct FallingToSpawn(Vec3);
 
@@ -40,7 +41,7 @@ struct FallingToSpawn(Vec3);
 enum Collider{
     Solid,
     Break,
-    Falling,
+    Debris,
 }
 
 
@@ -62,6 +63,7 @@ fn main() {
         .add_plugin(BallPlugin)
         .add_plugin(BlockPlugin)
         .add_plugin(FallingPlugin)
+        .add_plugin(GravityPlugin)
         .run();
 }
 
@@ -131,7 +133,7 @@ fn spawn_walls(
     commands
         .spawn_bundle(SpriteBundle{
             material: materials.wall.clone(),
-            transform: Transform::from_xyz(0.0, -winsize.h / 2.0, 0.0),
+            transform: Transform::from_xyz(0.0, -winsize.h / 2.0, 10.), 
             sprite: Sprite::new(Vec2::new(winsize.w, WALL_THICK)),
             ..Default::default()
         })

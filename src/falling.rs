@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{Collider, Materials, FallingToSpawn, BLK_WIDTH, BLK_HEIGHT};
+use crate::{Collider, Materials, FallingToSpawn, Gravity, BLK_WIDTH, BLK_HEIGHT};
 
 pub struct FallingPlugin;
 
@@ -26,7 +26,8 @@ fn falling_to_spawn(
             },
             ..Default::default()
         })
-        .insert(Collider::Falling);
+        .insert(Gravity)
+        .insert(Collider::Debris);
         
         commands.entity(falling_entity).despawn();
     }
