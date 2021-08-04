@@ -34,7 +34,7 @@ fn ball_spawn(
         ..Default::default()
    })
     .insert(Ball{
-        velocity: 400.0 * Vec3::new(0.5, -0.5, 0.0).normalize(),
+        velocity: 350.0 * Vec3::new(0.5, -0.5, 0.0).normalize(),
     });
 }
 
@@ -69,8 +69,6 @@ fn ball_collision_system(
                 );
 
             if let Some(collision) = collision{
-                println!("{:?}", collision);
-
                 //if hits block
                 if *collider == Collider::Break{
                    commands.entity(collider_entity).despawn(); 

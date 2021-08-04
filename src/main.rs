@@ -3,11 +3,13 @@ use bevy::{
 };
 
 mod ball;
+mod paddle;
 mod block;
 mod falling;
 mod gravity;
 
 use ball::BallPlugin;
+use paddle::PaddlePlugin;
 use block::BlockPlugin;
 use falling::FallingPlugin;
 use gravity::GravityPlugin;
@@ -20,6 +22,7 @@ const BLK_WIDTH: f32 = 40.0;
 
 struct Materials{
     ball: Handle<ColorMaterial>,
+    paddle: Handle<ColorMaterial>,
     wall: Handle<ColorMaterial>,
     red_block: Handle<ColorMaterial>,
     blue_block: Handle<ColorMaterial>,
@@ -32,6 +35,10 @@ struct WinSize{
 
 struct Ball{
     velocity: Vec3,
+}
+
+struct Paddle{
+    speed: f32,
 }
 
 struct Falling{
@@ -66,6 +73,7 @@ fn main() {
             SystemStage::single(spawn_walls.system()),
             )
         .add_plugin(BallPlugin)
+        .add_plugin(PaddlePlugin)
         .add_plugin(BlockPlugin)
         .add_plugin(FallingPlugin)
         .add_plugin(GravityPlugin)
@@ -90,6 +98,7 @@ fn setup(
 
     commands.insert_resource(Materials{
         ball: materials.add(Color::rgb(0.0, 0.0, 0.7).into()),
+        paddle: materials.add(Color::rgb(0.0, 0.7, 0.7).into()),
         wall: materials.add(Color::rgb(0.9, 0.9, 0.0).into()),
         red_block: materials.add(Color::rgb(0.9, 0.0, 0.0).into()),
         blue_block: materials.add(Color::rgb(0.0, 0.0, 0.9).into()),

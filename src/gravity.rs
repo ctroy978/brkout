@@ -1,9 +1,8 @@
 use bevy::{
     prelude::*,
-    sprite::collide_aabb::{collide, Collision},
 };
 
-use crate::{Materials, WinSize, Collider, Gravity, Falling};
+use crate::{WinSize, Gravity, Falling};
 
 pub struct GravityPlugin;
 
