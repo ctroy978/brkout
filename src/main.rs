@@ -17,6 +17,7 @@ const BLK_HEIGHT: f32 = 20.0;
 const BLK_WIDTH: f32 = 40.0;
 
 
+
 struct Materials{
     ball: Handle<ColorMaterial>,
     wall: Handle<ColorMaterial>,
@@ -30,6 +31,10 @@ struct WinSize{
 }
 
 struct Ball{
+    velocity: Vec3,
+}
+
+struct Falling{
     velocity: Vec3,
 }
 
@@ -71,6 +76,7 @@ fn main() {
 fn setup(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    asset_server: Res<AssetServer>,
     mut windows: ResMut<Windows>,
     ){
 
@@ -88,7 +94,6 @@ fn setup(
         red_block: materials.add(Color::rgb(0.9, 0.0, 0.0).into()),
         blue_block: materials.add(Color::rgb(0.0, 0.0, 0.9).into()),
 
-            
     });
 
 }

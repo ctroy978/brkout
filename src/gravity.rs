@@ -3,7 +3,7 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-use crate::{Materials, WinSize, Collider, Gravity};
+use crate::{Materials, WinSize, Collider, Gravity, Falling};
 
 pub struct GravityPlugin;
 
@@ -18,16 +18,17 @@ fn gravity_system(
     mut commands: Commands,
     time: Res<Time>,
     winsize: Res<WinSize>,
-    mut query: Query<(Entity, &mut Transform), With<Gravity>>,
+    mut query: Query<(Entity, &mut Transform, &mut Falling), With<Gravity>>,
 ){
-    let gravity = 300.0;
+    let gravity = 300.0 * Vec3::new(0.0, -0.2, 0.0);
     //gravity effects here
-    for (gravity_entity, mut transform) in query.iter_mut(){
-        let translation = &mut transform.translation;
-        translation.y  -= gravity * time.delta_seconds();
+    let delta_seconds = f32::min(0.2, time.delta_seconds());
+    for (falling_entity, mut transform, mut falling) in query.iter_mut(){
+        transform.translation += falling.velocity * delta_seconds;
+        falling.velocity = falling.velocity + (gravity * delta_seconds);
 
-        if translation.y < -(winsize.h / 2.0){
-            commands.entity(gravity_entity).despawn();
+        if transform.translation.y < -(winsize.h / 2.0){
+            commands.entity(falling_entity).despawn();
         } 
     }
 }

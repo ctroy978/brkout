@@ -34,9 +34,8 @@ fn ball_spawn(
         ..Default::default()
    })
     .insert(Ball{
-        velocity: Vec3::new(0.5, -0.5, 0.0) * 400.0
-    })
-    .insert(Timer::from_seconds(0.1, true));
+        velocity: 400.0 * Vec3::new(0.5, -0.5, 0.0).normalize(),
+    });
 }
 
 fn ball_movement_system(
@@ -70,10 +69,15 @@ fn ball_collision_system(
                 );
 
             if let Some(collision) = collision{
+                println!("{:?}", collision);
 
                 //if hits block
                 if *collider == Collider::Break{
                    commands.entity(collider_entity).despawn(); 
+                    //turn it into falling block with Vec3 position.
+                    commands
+                        .spawn()
+                        .insert(FallingToSpawn(transform.translation.clone()));
                 }
 
 
@@ -98,13 +102,6 @@ fn ball_collision_system(
 
                 if *collider == Collider::Solid{
                     break;
-                }
-
-                if *collider == Collider::Break{
-                    //turn it into falling block with Vec3 position.
-                    commands
-                        .spawn()
-                        .insert(FallingToSpawn(transform.translation.clone()));
                 }
             }
         }
