@@ -3,7 +3,7 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-use crate::{Ball, Materials, Collider, FallingToSpawn};
+use crate::{Ball, Falling, Materials, Collider, FallingToSpawn};
 
 
 pub struct BallPlugin;
@@ -26,7 +26,7 @@ fn ball_spawn(
     ){
     commands.spawn_bundle(SpriteBundle{
         material: materials.ball.clone(),
-        sprite: Sprite::new(Vec2::new(10.0, 10.0)),
+        sprite: Sprite::new(Vec2::new(15.0, 15.0)),
         transform: Transform{
             translation: Vec3::new(50.0, 50.0, 10.0),
             ..Default::default()
@@ -52,14 +52,14 @@ fn ball_movement_system(
 fn ball_collision_system(
     mut commands: Commands,
     mut ball_query: Query<(&mut Ball, &Transform, &Sprite)>,
-    collider_query: Query<(Entity, &Collider, &Transform, &Sprite)>,
+    mut collider_query: Query<(Entity, &Collider, &Transform, &Sprite, &mut Falling)>,
     ){
 
     if let Ok((mut ball, ball_transform, ball_sprite)) = ball_query.single_mut(){
         let ball_size = ball_sprite.size;
         let velocity = &mut ball.velocity;
 
-        for(collider_entity, collider, transform, sprite) in collider_query.iter(){
+        for(collider_entity, collider, transform, sprite, mut falling) in collider_query.iter_mut(){
 
             let collision = collide(
                 ball_transform.translation,
@@ -71,11 +71,8 @@ fn ball_collision_system(
             if let Some(collision) = collision{
                 //if hits block
                 if *collider == Collider::Break{
-                   commands.entity(collider_entity).despawn(); 
-                    //turn it into falling block with Vec3 position.
-                    commands
-                        .spawn()
-                        .insert(FallingToSpawn(transform.translation.clone()));
+                    //turn falling on
+                    falling.gravity_on = true;
                 }
 
 
@@ -84,10 +81,22 @@ fn ball_collision_system(
                 let mut reflect_y = false;
 
                 match collision{
-                    Collision::Left => reflect_x = velocity.x > 0.0,
-                    Collision::Right => reflect_x = velocity.x < 0.0,
-                    Collision::Top => reflect_y = velocity.y < 0.0,
-                    Collision::Bottom => reflect_y = velocity.y > 0.0,
+                    Collision::Left => {
+                        reflect_x = velocity.x > 0.0;
+                        falling.velocity.x += 5.0;
+                    }
+                    Collision::Right => {
+                        reflect_x = velocity.x < 0.0;
+                        falling.velocity.x -= 5.0;
+                    }
+                    Collision::Top => {
+                        reflect_y = velocity.y < 0.0;
+                        falling.velocity.y -= 15.0;
+                    }
+                    Collision::Bottom => {
+                        reflect_y = velocity.y > 0.0;
+                        falling.velocity.y += 35.0;
+                    },
                 }
 
                 if reflect_x{
