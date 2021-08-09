@@ -17,6 +17,8 @@ use gravity::GravityPlugin;
 const WALL_THICK: f32 = 10.0;
 const BLK_HEIGHT: f32 = 20.0;
 const BLK_WIDTH: f32 = 40.0;
+const PADDLE_WIDTH: f32 = 80.0;
+const PADDLE_HEIGHT: f32 = 15.0;
 
 
 
@@ -26,6 +28,7 @@ struct Materials{
     wall: Handle<ColorMaterial>,
     red_block: Handle<ColorMaterial>,
     blue_block: Handle<ColorMaterial>,
+    green_block: Handle<ColorMaterial>,
 }
 
 struct WinSize{
@@ -43,9 +46,8 @@ struct Paddle{
 
 struct Falling{
     velocity: Vec3,
+    gravity_on: bool,
 }
-
-struct Gravity;
 
 struct FallingToSpawn(Vec3);
 
@@ -102,7 +104,7 @@ fn setup(
         wall: materials.add(Color::rgb(0.9, 0.9, 0.0).into()),
         red_block: materials.add(Color::rgb(0.9, 0.0, 0.0).into()),
         blue_block: materials.add(Color::rgb(0.0, 0.0, 0.9).into()),
-
+        green_block: materials.add(Color::rgb(0.0, 0.9, 0.0).into()),
     });
 
 }
@@ -121,6 +123,10 @@ fn spawn_walls(
             sprite: Sprite::new(Vec2::new(WALL_THICK, winsize.h)),
             ..Default::default()
     })
+    .insert(Falling{
+        velocity: Vec3::new(0.0, 0.0, 0.0),
+        gravity_on: false,
+    })
     .insert(Collider::Solid);
 
     //right wall
@@ -130,6 +136,10 @@ fn spawn_walls(
             transform: Transform::from_xyz(winsize.w / 2.0, 0.0, 0.0),
             sprite: Sprite::new(Vec2::new(WALL_THICK, winsize.h)),
             ..Default::default()
+        })
+        .insert(Falling{
+            velocity: Vec3::new(0.0, 0.0, 0.0),
+            gravity_on: false,
         })
         .insert(Collider::Solid);
 
@@ -141,6 +151,10 @@ fn spawn_walls(
             sprite: Sprite::new(Vec2::new(winsize.w, WALL_THICK)),
             ..Default::default()
         })
+        .insert(Falling{
+            velocity: Vec3::new(0.0, 0.0, 0.0),
+            gravity_on: false,
+        })
         .insert(Collider::Solid);
 
     //bot wall
@@ -150,6 +164,10 @@ fn spawn_walls(
             transform: Transform::from_xyz(0.0, -winsize.h / 2.0, 10.), 
             sprite: Sprite::new(Vec2::new(winsize.w, WALL_THICK)),
             ..Default::default()
+        })
+        .insert(Falling{
+            velocity: Vec3::new(0.0, 0.0, 0.0),
+            gravity_on: false,
         })
         .insert(Collider::Solid);
 }

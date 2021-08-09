@@ -3,11 +3,9 @@ use bevy::{
     sprite::collide_aabb::{collide, Collision},
 };
 
-const PADDLE_WIDTH: f32 = 80.0;
-const PADDLE_HEIGHT: f32 = 15.0;
 
 use crate::{Falling, Paddle, Materials, Collider, 
-            WinSize};
+            WinSize, PADDLE_WIDTH, PADDLE_HEIGHT};
 
 pub struct PaddlePlugin;
 
@@ -32,15 +30,19 @@ fn paddle_spawn(
         material: materials.paddle.clone(),
         sprite: Sprite::new(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT)),
         transform: Transform{
-            translation: Vec3::new(0.0, -winsize.h / 2.0 + PADDLE_HEIGHT, 10.0),
+            translation: Vec3::new(0.0, -winsize.h / 2.0 + PADDLE_HEIGHT + 25.0, 10.0),
             ..Default::default()
         },
         ..Default::default()
     })
     .insert(Collider::Solid)
-        .insert(Paddle{
-            speed: 500.0,
-        });
+    .insert(Falling{
+        velocity: Vec3::new(0.0, 0.0, 0.0),
+        gravity_on: false,
+    })
+    .insert(Paddle{
+        speed: 500.0,
+    });
 }
 
 fn paddle_movement_system(
@@ -89,11 +91,11 @@ fn paddle_collision_system(
 
             if let Some(collision) = collision{
                 //bounce the object off the paddle
-                falling.velocity.y = 100.0;
+                falling.velocity.y = 150.0;
                 if transform.translation.x > paddle_transform.translation.x{
-                    falling.velocity.x = 20.0;
+                    falling.velocity.x = 25.0;
                 }else{
-                    falling.velocity.x = -20.0;
+                    falling.velocity.x = -25.0;
                 }
             }
         }
